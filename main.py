@@ -8,7 +8,16 @@ while True:
 
     choice = input("Enter your choice: ")
     if choice == "1":
-        print("Add expense selected")
+        title = input("Enter the title: ")
+        amnt = int(input("Enter the amount: "))
+        expense_id = len(expenses) + 1
+        expense = {
+            "id": expense_id,
+            "title": title,
+            "amount": amnt
+        }
+        expenses.append(expense)
+        print(expenses)
     elif choice == "2" : 
         print("View expense selected")
     elif choice == "3":
