@@ -17,9 +17,16 @@ while True:
             "amount": amnt
         }
         expenses.append(expense)
-        print(expenses)
+        print("Expenses added successfully")
     elif choice == "2" : 
-        print("View expense selected")
+        if not expenses:
+            print("No expenses found")
+        else:
+            for expense in expenses:
+                print("ID :", expense["id"],
+                    "| Title: ", expense["title"],
+                    "| Amount:", expense["amount"]
+                )
     elif choice == "3":
         break
     else:
