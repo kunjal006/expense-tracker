@@ -6,7 +6,8 @@ while True:
     print("1. Add expense")
     print("2. View expense")
     print("3. Delete expense")
-    print("4. Exit")
+    print("4. Update expense")
+    print("5. Exit")
 
     choice = input("Enter your choice: ")
     if choice == "1":
@@ -41,6 +42,32 @@ while True:
         if not found:
             print("Expense not found")
     elif choice == "4":
+        if not expenses:
+            print("No expenses found")
+        else:
+            id_upd = int(input("Enter the id you want to update: "))
+            found = False
+            for expense in expenses:
+                if id_upd == expense["id"]:
+                    print("What do you want to update?")
+                    print("1. Title")
+                    print("2. Amount")
+                    op = input("Enter your choice: ")
+                    if op == "1":
+                        title = input("Enter the title: ")
+                        expense["title"] = title
+                        print("Name changed successfully")
+                    elif op == "2":
+                        amount = int(input("Enter your amount: "))
+                        expense["amount"] = amount
+                        print("Amount changed successfully")
+                    else:
+                        print("Invalid choice")
+                    found = True
+                    break
+            if not found:
+                print("Expense not found")
+    elif choice == "5":
         break
     else:
         print("Invalid choice")
