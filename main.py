@@ -1,6 +1,12 @@
 expenses = []
 next_id = 1
-
+categories = [
+    "Food",
+    "Travel",
+    "Shopping",
+    "Bills",
+    "Other"
+]
 
 def display_menu():
     print("\n-------Expense Tracker-----")
@@ -13,10 +19,12 @@ def display_menu():
 def add_expense(expenses,next_id):
     title = input("Enter the title: ")
     amnt = int(input("Enter the amount: "))
+    category = get_category()
     expense = {
         "id": next_id,
         "title": title,
-        "amount": amnt
+        "amount": amnt,
+        "category": category
     }
     expenses.append(expense)
     print("Expenses added successfully")
@@ -29,7 +37,8 @@ def view_expense(expenses):
         for expense in expenses:
             print("ID :", expense["id"],
                 "| Title: ", expense["title"],
-                "| Amount:", expense["amount"]
+                "| Amount: ", expense["amount"],
+                "| Category: ", expense["category"]
             )
 
 def delete_expense(expenses):
@@ -55,6 +64,7 @@ def update_expense(expenses):
                 print("What do you want to update?")
                 print("1. Title")
                 print("2. Amount")
+                print("3. Category")
                 op = input("Enter your choice: ")
                 if op == "1":
                     title = input("Enter the title: ")
@@ -64,12 +74,30 @@ def update_expense(expenses):
                     amount = int(input("Enter your amount: "))
                     expense["amount"] = amount
                     print("Amount changed successfully")
+                elif op == "3":
+                    
+                    expense["category"] = get_category()
+                    print("Category changed successfully")
+
                 else:
                     print("Invalid choice")
                 found = True
                 break
         if not found:
             print("Expense not found")
+
+def get_category():
+    print("Choose Category: ")
+    for i, category in enumerate(categories, start=1):
+        print(i, ".", category)
+    while True:
+        category_choice = int(input("Enter category number: "))
+
+        if 1 <= category_choice <= len(categories):
+            category = categories[category_choice -1]
+            return category
+        else:
+            print("Invalid Choice")
 
 while True:
     display_menu()
