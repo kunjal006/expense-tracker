@@ -8,13 +8,16 @@ categories = [
     "Other"
 ]
 
+
+
 def display_menu():
     print("\n-------Expense Tracker-----")
     print("1. Add expense")
     print("2. View expense")
     print("3. Delete expense")
     print("4. Update expense")
-    print("5. Exit")
+    print("5. Monthly summary")
+    print("6. Exit")
 
 def add_expense(expenses,next_id):
     title = input("Enter the title: ")
@@ -99,6 +102,29 @@ def get_category():
         else:
             print("Invalid Choice")
 
+def monthly_summary(expenses):
+    total = 0
+    summary = {
+        "Food":0,
+        "Travel":0,
+        "Shopping":0,
+        "Bills":0,
+        "Other":0
+    }
+    if not expenses:
+        print("No expenses found")
+        return
+    for expense in expenses:
+        amount = expense["amount"]
+        category = expense["category"]
+
+        total += amount
+        summary[category] += amount
+    print("----Monthly expenses---")
+    print("Total expenses", total)
+    for category,amount in summary.items():
+        print(category, ":", amount)
+
 while True:
     display_menu()
     choice = input("Enter your choice: ")
@@ -111,6 +137,8 @@ while True:
     elif choice == "4":
         update_expense(expenses)
     elif choice == "5":
+        monthly_summary(expenses)
+    elif choice == "6":
         break
     else:
         print("Invalid choice")
