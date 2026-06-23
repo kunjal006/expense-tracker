@@ -1,12 +1,127 @@
-expenses = []
-next_id = 1
-categories = [
-    "Food",
-    "Travel",
-    "Shopping",
-    "Bills",
-    "Other"
-]
+class ExpenseTracker:
+    def __init__(self):
+        self.expenses = []
+        self.next_id = 1
+        self.categories = [
+            "Food",
+            "Travel",
+            "Shopping",
+            "Bills",
+            "Other"
+        ]
+
+
+    def view_expense(self):
+        if not self.expenses:
+            print("No expenses found")
+        else:
+            for expense in self.expenses:
+                print(
+                    "ID :", expense["id"],
+                    "| Title:", expense["title"],
+                    "| Amount:", expense["amount"],
+                    "| Category:", expense["category"]
+                )
+    
+    def add_expense(self):
+        title = input("Enter the title: ")
+        amnt = int(input("Enter the amount: "))
+        category = self.get_category()
+        expense = {
+            "id": self.next_id,
+            "title": title,
+            "amount": amnt,
+            "category": category
+        }
+        self.expenses.append(expense)
+        print("Expenses added successfully")
+        self.next_id += 1
+
+    def delete_expense(self):
+        id_del = int(input("Enter the id you want to delete: "))
+        found = False
+        for expense in self.expenses:
+            if id_del == expense["id"]:
+                self.expenses.remove(expense)
+                found = True
+                print("Expense deleted successfully")
+                break
+        if not found:
+            print("Expense not found")
+
+    def update_expense(self):
+        if not self.expenses:
+                print("No expenses found")
+        else:
+            id_upd = int(input("Enter the id you want to update: "))
+            found = False
+            for expense in self.expenses:
+                if id_upd == expense["id"]:
+                    print("What do you want to update?")
+                    print("1. Title")
+                    print("2. Amount")
+                    print("3. Category")
+                    op = input("Enter your choice: ")
+                    if op == "1":
+                        title = input("Enter the title: ")
+                        expense["title"] = title
+                        print("Name changed successfully")
+                    elif op == "2":
+                        amount = int(input("Enter your amount: "))
+                        expense["amount"] = amount
+                        print("Amount changed successfully")
+                    elif op == "3":
+                    
+                        expense["category"] = self.get_category()
+                        print("Category changed successfully")
+
+                    else:
+                        print("Invalid choice")
+                    found = True
+                    break
+            if not found:
+                print("Expense not found")
+    
+    def monthly_summary(self):
+        total = 0
+        summary = {
+            "Food":0,
+            "Travel":0,
+            "Shopping":0,
+            "Bills":0,
+            "Other":0
+        }
+        if not self.expenses:
+            print("No expenses found")
+            return
+        for expense in self.expenses:
+            amount = expense["amount"]
+            category = expense["category"]
+
+            total += amount
+            summary[category] += amount
+        print("----Monthly expenses---")
+        print("Total expenses", total)
+        for category,amount in summary.items():
+            print(category, ":", amount)
+
+    def get_category(self):
+        print("Choose Category: ")
+        for i, category in enumerate(self.categories, start=1):
+            print(i, ".", category)
+        while True:
+            category_choice = int(input("Enter category number: "))
+
+            if 1 <= category_choice <= len(self.categories):
+                category = self.categories[category_choice -1]
+                return category
+            else:
+                print("Invalid Choice")
+
+
+
+tracker = ExpenseTracker()
+
 
 
 
@@ -19,125 +134,20 @@ def display_menu():
     print("5. Monthly summary")
     print("6. Exit")
 
-def add_expense(expenses,next_id):
-    title = input("Enter the title: ")
-    amnt = int(input("Enter the amount: "))
-    category = get_category()
-    expense = {
-        "id": next_id,
-        "title": title,
-        "amount": amnt,
-        "category": category
-    }
-    expenses.append(expense)
-    print("Expenses added successfully")
-    return next_id + 1
-
-def view_expense(expenses):
-    if not expenses:
-            print("No expenses found")
-    else:
-        for expense in expenses:
-            print("ID :", expense["id"],
-                "| Title: ", expense["title"],
-                "| Amount: ", expense["amount"],
-                "| Category: ", expense["category"]
-            )
-
-def delete_expense(expenses):
-    id_del = int(input("Enter the id you want to delete: "))
-    found = False
-    for expense in expenses:
-        if id_del == expense["id"]:
-            expenses.remove(expense)
-            found = True
-            print("Expense deleted successfully")
-            break
-    if not found:
-        print("Expense not found")
-
-def update_expense(expenses):
-    if not expenses:
-            print("No expenses found")
-    else:
-        id_upd = int(input("Enter the id you want to update: "))
-        found = False
-        for expense in expenses:
-            if id_upd == expense["id"]:
-                print("What do you want to update?")
-                print("1. Title")
-                print("2. Amount")
-                print("3. Category")
-                op = input("Enter your choice: ")
-                if op == "1":
-                    title = input("Enter the title: ")
-                    expense["title"] = title
-                    print("Name changed successfully")
-                elif op == "2":
-                    amount = int(input("Enter your amount: "))
-                    expense["amount"] = amount
-                    print("Amount changed successfully")
-                elif op == "3":
-                    
-                    expense["category"] = get_category()
-                    print("Category changed successfully")
-
-                else:
-                    print("Invalid choice")
-                found = True
-                break
-        if not found:
-            print("Expense not found")
-
-def get_category():
-    print("Choose Category: ")
-    for i, category in enumerate(categories, start=1):
-        print(i, ".", category)
-    while True:
-        category_choice = int(input("Enter category number: "))
-
-        if 1 <= category_choice <= len(categories):
-            category = categories[category_choice -1]
-            return category
-        else:
-            print("Invalid Choice")
-
-def monthly_summary(expenses):
-    total = 0
-    summary = {
-        "Food":0,
-        "Travel":0,
-        "Shopping":0,
-        "Bills":0,
-        "Other":0
-    }
-    if not expenses:
-        print("No expenses found")
-        return
-    for expense in expenses:
-        amount = expense["amount"]
-        category = expense["category"]
-
-        total += amount
-        summary[category] += amount
-    print("----Monthly expenses---")
-    print("Total expenses", total)
-    for category,amount in summary.items():
-        print(category, ":", amount)
 
 while True:
     display_menu()
     choice = input("Enter your choice: ")
     if choice == "1":
-       next_id = add_expense(expenses,next_id)
+       tracker.add_expense()
     elif choice == "2" : 
-        view_expense(expenses)
+        tracker.view_expense()
     elif choice == "3":
-        delete_expense(expenses)
+        tracker.delete_expense()
     elif choice == "4":
-        update_expense(expenses)
+        tracker.update_expense()
     elif choice == "5":
-        monthly_summary(expenses)
+        tracker.monthly_summary()
     elif choice == "6":
         break
     else:
