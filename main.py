@@ -3,8 +3,6 @@ import json
 
 class ExpenseTracker:
     def __init__(self):
-        # self.expenses = []
-        # self.next_id = 1
         self.categories = [
             "Food",
             "Travel",
