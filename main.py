@@ -1,7 +1,10 @@
+import json
+
+
 class ExpenseTracker:
     def __init__(self):
-        self.expenses = []
-        self.next_id = 1
+        # self.expenses = []
+        # self.next_id = 1
         self.categories = [
             "Food",
             "Travel",
@@ -9,6 +12,29 @@ class ExpenseTracker:
             "Bills",
             "Other"
         ]
+        self.load_expenses()
+    
+
+    def load_expenses(self):
+        try:
+            with open("expenses.json","r") as file:
+                data = json.load(file)
+
+            self.expenses = data
+
+            if self.expenses:
+                last_id = self.expenses[-1]["id"]
+                self.next_id = last_id + 1
+            else:
+                self.next_id = 1
+        except FileNotFoundError:
+            self.expenses = []
+            self.next_id = 1
+
+
+    def save_expenses(self):
+        with open("expenses.json","w") as file:
+            json.dump(self.expenses,file, indent=4)
 
 
     def view_expense(self):
@@ -34,6 +60,7 @@ class ExpenseTracker:
             "category": category
         }
         self.expenses.append(expense)
+        self.save_expenses()
         print("Expenses added successfully")
         self.next_id += 1
 
@@ -43,6 +70,7 @@ class ExpenseTracker:
         for expense in self.expenses:
             if id_del == expense["id"]:
                 self.expenses.remove(expense)
+                self.save_expenses()
                 found = True
                 print("Expense deleted successfully")
                 break
@@ -77,6 +105,7 @@ class ExpenseTracker:
 
                     else:
                         print("Invalid choice")
+                    self.save_expenses()
                     found = True
                     break
             if not found:
@@ -121,8 +150,6 @@ class ExpenseTracker:
 
 
 tracker = ExpenseTracker()
-
-
 
 
 def display_menu():
