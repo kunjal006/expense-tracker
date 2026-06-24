@@ -147,7 +147,9 @@ class ExpenseTracker:
         print("----Monthly expenses---")
         print("Total expenses", total)
         for category,amount in summary.items():
-            print(category, ":", amount)
+            if total > 0:
+                percentage = (amount / total) * 100
+                print(f"{category}: ₹{amount} ({percentage:.2f}%)")
 
     def get_category(self):
         print("Choose Category: ")
@@ -197,6 +199,21 @@ class ExpenseTracker:
         if not found:
             print("No expense found")
 
+    def highest_expense(self):
+        if not self.expenses:
+            print("No expenses found")
+            return
+        highest = max(self.expenses, key = lambda x: x["amount"])
+        print("Highest Expense: ", highest["title"], "| ", highest["amount"])
+
+    def lowest_expense(self):
+        if not self.expenses:
+            print("No expenses found")
+            return
+        lowest = min(self.expenses, key = lambda x: x["amount"] )
+        print ("Lowest expense: ", lowest["title"], "| ", lowest["amount"])
+
+
 
 tracker = ExpenseTracker()
 
@@ -210,7 +227,9 @@ def display_menu():
     print("5. Monthly summary")
     print("6. Filter by Category")
     print("7. Search by Title Name")
-    print("8. Exit")
+    print("8. Highest expense")
+    print("9. Lowest expense")
+    print("10. Exit")
 
 
 while True:
@@ -231,6 +250,10 @@ while True:
     elif choice == "7":
         tracker.search_by_name()
     elif choice == "8":
+        tracker.highest_expense()
+    elif choice == "9":
+        tracker.lowest_expense()
+    elif choice == "10":
         break
     else:
         print("Invalid choice")
