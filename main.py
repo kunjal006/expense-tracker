@@ -155,6 +155,20 @@ class ExpenseTracker:
             else:
                 print("Invalid Choice")
 
+    def filter_by_Category(self):
+        selectedCategory = self.get_category()
+        found = False
+        for expense in self.expenses:
+            if expense["category"] == selectedCategory:
+                found = True
+                print(
+                    "ID :", expense["id"],
+                    "| Title:", expense["title"],
+                    "| Amount:", expense["amount"],
+                    "| Category:", expense["category"]
+                )
+        if not found:
+            print("No expense found")
 
 
 tracker = ExpenseTracker()
@@ -167,7 +181,8 @@ def display_menu():
     print("3. Delete expense")
     print("4. Update expense")
     print("5. Monthly summary")
-    print("6. Exit")
+    print("6. Filter by Category")
+    print("7. Exit")
 
 
 while True:
@@ -184,6 +199,8 @@ while True:
     elif choice == "5":
         tracker.monthly_summary()
     elif choice == "6":
+        tracker.filter_by_Category()
+    elif choice == "7":
         break
     else:
         print("Invalid choice")
