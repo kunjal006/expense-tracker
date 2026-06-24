@@ -34,6 +34,16 @@ class ExpenseTracker:
         with open("expenses.json","w") as file:
             json.dump(self.expenses,file, indent=4)
 
+    def get_valid_number(self, message):
+        while True:
+            try:
+                number = int(input(message))
+                if number > 0:
+                    return number
+                else:
+                    print("Number must be greater than 0")
+            except ValueError:
+                print("Please enter a valid number")
 
     def view_expense(self):
         if not self.expenses:
@@ -49,7 +59,7 @@ class ExpenseTracker:
     
     def add_expense(self):
         title = input("Enter the title: ")
-        amnt = int(input("Enter the amount: "))
+        amnt = self.get_valid_number("Enter the amount: ")
         category = self.get_category()
         expense = {
             "id": self.next_id,
@@ -63,7 +73,7 @@ class ExpenseTracker:
         self.next_id += 1
 
     def delete_expense(self):
-        id_del = int(input("Enter the id you want to delete: "))
+        id_del = self.get_valid_number("Enter the id you want to delete: ")
         found = False
         for expense in self.expenses:
             if id_del == expense["id"]:
@@ -79,7 +89,7 @@ class ExpenseTracker:
         if not self.expenses:
                 print("No expenses found")
         else:
-            id_upd = int(input("Enter the id you want to update: "))
+            id_upd = self.get_valid_number("Enter the id you want to update: ")
             found = False
             for expense in self.expenses:
                 if id_upd == expense["id"]:
@@ -93,7 +103,7 @@ class ExpenseTracker:
                         expense["title"] = title
                         print("Name changed successfully")
                     elif op == "2":
-                        amount = int(input("Enter your amount: "))
+                        amount = self.get_valid_number("Enter your amount: ")
                         expense["amount"] = amount
                         print("Amount changed successfully")
                     elif op == "3":
@@ -137,7 +147,7 @@ class ExpenseTracker:
         for i, category in enumerate(self.categories, start=1):
             print(i, ".", category)
         while True:
-            category_choice = int(input("Enter category number: "))
+            category_choice = self.get_valid_number("Enter category number: ")
 
             if 1 <= category_choice <= len(self.categories):
                 category = self.categories[category_choice -1]
