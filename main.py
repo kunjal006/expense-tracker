@@ -169,6 +169,25 @@ class ExpenseTracker:
                 )
         if not found:
             print("No expense found")
+    
+    def search_by_name(self):
+        search = input("Enter name: ")
+        search = search.lower()
+        
+        found = False
+
+        for expense in self.expenses:
+            title = expense["title"].lower()
+
+            if search in title:
+                print(
+                    "ID :", expense["id"],
+                    "| Title:", expense["title"],
+                    "| Amount:", expense["amount"],
+                    "| Category:", expense["category"]
+                )
+        if not found:
+            print("No expense found")
 
 
 tracker = ExpenseTracker()
@@ -182,7 +201,8 @@ def display_menu():
     print("4. Update expense")
     print("5. Monthly summary")
     print("6. Filter by Category")
-    print("7. Exit")
+    print("7. Search by Title Name")
+    print("8. Exit")
 
 
 while True:
@@ -201,6 +221,8 @@ while True:
     elif choice == "6":
         tracker.filter_by_Category()
     elif choice == "7":
+        tracker.search_by_name()
+    elif choice == "8":
         break
     else:
         print("Invalid choice")
