@@ -1,1 +1,9 @@
-[{"id": 1, "title": "pizza", "amount": 100, "category": "Food"}, {"id": 3, "title": "uber", "amount": 100, "category": "Travel"}, {"id": 4, "title": "bag", "amount": 3000, "category": "Shopping"}, {"id": 5, "title": "shoes", "amount": 2000, "category": "Shopping"}, {"id": 6, "title": "pasta", "amount": 100, "category": "Food"}]
+[
+    {
+        "id": 1,
+        "title": "pizza",
+        "amount": 200,
+        "category": "Food",
+        "date": "2026-06-25 00:16:38"
+    }
+]

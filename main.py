@@ -1,4 +1,5 @@
 import json
+from datetime import datetime
 
 
 class ExpenseTracker:
@@ -28,6 +29,9 @@ class ExpenseTracker:
         except FileNotFoundError:
             self.expenses = []
             self.next_id = 1
+        except json.JSONDecodeError:
+            self.expenses = []
+            self.next_id = 1
 
 
     def save_expenses(self):
@@ -54,18 +58,21 @@ class ExpenseTracker:
                     "ID :", expense["id"],
                     "| Title:", expense["title"],
                     "| Amount:", expense["amount"],
-                    "| Category:", expense["category"]
+                    "| Category:", expense["category"],
+                    "| Date:", expense["date"]
                 )
     
     def add_expense(self):
         title = input("Enter the title: ")
         amnt = self.get_valid_number("Enter the amount: ")
         category = self.get_category()
+        current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         expense = {
             "id": self.next_id,
             "title": title,
             "amount": amnt,
-            "category": category
+            "category": category,
+            "date": current_time
         }
         self.expenses.append(expense)
         self.save_expenses()
@@ -180,6 +187,7 @@ class ExpenseTracker:
             title = expense["title"].lower()
 
             if search in title:
+                found = True
                 print(
                     "ID :", expense["id"],
                     "| Title:", expense["title"],
