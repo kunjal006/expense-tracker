@@ -1,5 +1,4 @@
-import json
-from datetime import datetime
+from database import get_connection
 
 
 class ExpenseTracker:
@@ -11,32 +10,7 @@ class ExpenseTracker:
             "Bills",
             "Other"
         ]
-        self.load_expenses()
-    
-
-    def load_expenses(self):
-        try:
-            with open("expenses.json","r") as file:
-                data = json.load(file)
-
-            self.expenses = data
-
-            if self.expenses:
-                last_id = self.expenses[-1]["id"]
-                self.next_id = last_id + 1
-            else:
-                self.next_id = 1
-        except FileNotFoundError:
-            self.expenses = []
-            self.next_id = 1
-        except json.JSONDecodeError:
-            self.expenses = []
-            self.next_id = 1
-
-
-    def save_expenses(self):
-        with open("expenses.json","w") as file:
-            json.dump(self.expenses,file, indent=4)
+ 
 
     def get_valid_number(self, message):
         while True:
@@ -50,106 +24,159 @@ class ExpenseTracker:
                 print("Please enter a valid number")
 
     def view_expense(self):
-        if not self.expenses:
+        conn = get_connection()
+        cursor = conn.cursor()
+        cursor.execute(
+            """
+            SELECT * FROM expenses
+            """
+        )
+        expenses = cursor.fetchall()
+        if not expenses:
             print("No expenses found")
         else:
-            for expense in self.expenses:
+            for expense in expenses:
                 print(
-                    "ID :", expense["id"],
-                    "| Title:", expense["title"],
-                    "| Amount:", expense["amount"],
-                    "| Category:", expense["category"],
-                    "| Date:", expense["date"]
+                    "ID :", expense[0],
+                    "| Title:", expense[1],
+                    "| Amount:", expense[2],
+                    "| Category:", expense[3],
+                    "| Date:", expense[4]
                 )
+        cursor.close()
+        conn.close()
     
     def add_expense(self):
         title = input("Enter the title: ")
         amnt = self.get_valid_number("Enter the amount: ")
         category = self.get_category()
-        current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        expense = {
-            "id": self.next_id,
-            "title": title,
-            "amount": amnt,
-            "category": category,
-            "date": current_time
-        }
-        self.expenses.append(expense)
-        self.save_expenses()
+        
+        conn = get_connection()
+        cursor = conn.cursor()
+        cursor.execute(
+            """
+            INSERT INTO expenses (title, amount, category)
+            VALUES (%s, %s, %s)
+            """,
+            (title, amnt, category)
+        )
+        conn.commit()
+        cursor.close()
+        conn.close()
         print("Expenses added successfully")
-        self.next_id += 1
 
     def delete_expense(self):
         id_del = self.get_valid_number("Enter the id you want to delete: ")
-        found = False
-        for expense in self.expenses:
-            if id_del == expense["id"]:
-                self.expenses.remove(expense)
-                self.save_expenses()
-                found = True
-                print("Expense deleted successfully")
-                break
-        if not found:
+        conn =get_connection()
+        cursor = conn.cursor()
+        cursor.execute(
+            """
+            DELETE FROM expenses WHERE id = %s
+            """,
+            (id_del,)
+        )
+        if cursor.rowcount > 0:
+            print("Expense deleted Successfully")
+            conn.commit()
+        else:
             print("Expense not found")
+        
+        cursor.close()
+        conn.close()
 
     def update_expense(self):
-        if not self.expenses:
-                print("No expenses found")
-        else:
             id_upd = self.get_valid_number("Enter the id you want to update: ")
-            found = False
-            for expense in self.expenses:
-                if id_upd == expense["id"]:
-                    print("What do you want to update?")
-                    print("1. Title")
-                    print("2. Amount")
-                    print("3. Category")
-                    op = input("Enter your choice: ")
-                    if op == "1":
-                        title = input("Enter the title: ")
-                        expense["title"] = title
-                        print("Name changed successfully")
-                    elif op == "2":
-                        amount = self.get_valid_number("Enter your amount: ")
-                        expense["amount"] = amount
-                        print("Amount changed successfully")
-                    elif op == "3":
-                    
-                        expense["category"] = self.get_category()
-                        print("Category changed successfully")
-
-                    else:
-                        print("Invalid choice")
-                    self.save_expenses()
-                    found = True
-                    break
-            if not found:
-                print("Expense not found")
+            conn = get_connection()
+            cursor = conn.cursor()
+            print("What do you want to update?")
+            print("1. Title")
+            print("2. Amount")
+            print("3. Category")
+            op = input("Enter your choice: ")
+            if op == "1":
+                title = input("Enter the title: ")
+                cursor.execute(
+                    """
+                    UPDATE expenses
+                    SET title = %s
+                    WHERE id = %s;
+                    """,
+                    (title, id_upd)
+                    )
+                if cursor.rowcount > 0:
+                    conn.commit()
+                    print("Name changed Successfully")
+                else:
+                    print("Expense not found")
+            elif op == "2":
+                amount = self.get_valid_number("Enter your amount: ")
+                cursor.execute(
+                    """
+                    UPDATE expenses
+                    SET amount = %s
+                    WHERE id = %s;
+                    """,
+                    (amount, id_upd)
+                    )
+                if cursor.rowcount > 0:
+                    conn.commit()
+                    print("Amount changed Successfully")
+                else:
+                    print("Expense not found")
+            elif op == "3":
+                cat = self.get_category()
+                cursor.execute(
+                    """
+                    UPDATE expenses
+                    SET category = %s
+                    WHERE id = %s;
+                    """,
+                    (cat, id_upd)
+                    )
+                if cursor.rowcount > 0:
+                    conn.commit()
+                    print("Category changed Successfully")
+                else:
+                    print("Expense not found")
+            
+            else:
+                print("Invalid choice")
+            cursor.close()
+            conn.close()
     
     def monthly_summary(self):
-        total = 0
-        summary = {
-            "Food":0,
-            "Travel":0,
-            "Shopping":0,
-            "Bills":0,
-            "Other":0
-        }
-        if not self.expenses:
-            print("No expenses found")
-            return
-        for expense in self.expenses:
-            amount = expense["amount"]
-            category = expense["category"]
+        conn = get_connection()
+        cursor = conn.cursor()
+        cursor.execute(
+            """
+            SELECT category, SUM(amount)
+            FROM expenses
+            GROUP BY category;"""
+        )
+        expenses = cursor.fetchall()
 
-            total += amount
-            summary[category] += amount
+        if not expenses:
+            print("No expenses found")
+            cursor.close()
+            conn.close()
+            return
+        
+        total = 0
+
+        for expense in expenses:
+            total += expense[1]
+
         print("----Monthly expenses---")
         print("Total expenses", total)
-        for category,amount in summary.items():
-            if total > 0:
-                percentage = (amount / total) * 100
-                print(f"{category}: ₹{amount} ({percentage:.2f}%)")
+        for expense in expenses:
+            category = expense[0]
+            amount = expense[1]
+            percentage = (amount / total) * 100
+
+            print(f"{category}: ₹{amount} ({percentage:.2f}%)")
+
+        cursor.close()
+        conn.close()
 
     def get_category(self):
         print("Choose Category: ")
@@ -166,52 +193,107 @@ class ExpenseTracker:
 
     def filter_by_Category(self):
         selectedCategory = self.get_category()
-        found = False
-        for expense in self.expenses:
-            if expense["category"] == selectedCategory:
-                found = True
+        conn = get_connection()
+        cursor = conn.cursor()
+        cursor.execute(
+            """
+            SELECT * FROM expenses
+            WHERE category = %s;
+            """,
+            (selectedCategory,)
+        )
+        expenses = cursor.fetchall()
+        if not expenses:
+            print("No expenses found")
+        else:
+            for expense in expenses:
                 print(
-                    "ID :", expense["id"],
-                    "| Title:", expense["title"],
-                    "| Amount:", expense["amount"],
-                    "| Category:", expense["category"]
+                    "ID :", expense[0],
+                    "| Title:", expense[1],
+                    "| Amount:", expense[2],
+                    "| Category:", expense[3],
+                    "| Date:", expense[4]
                 )
-        if not found:
-            print("No expense found")
-    
+        cursor.close()
+        conn.close()
+
     def search_by_name(self):
         search = input("Enter name: ")
-        search = search.lower()
-        
-        found = False
+        conn = get_connection()
+        cursor = conn.cursor()
+        cursor.execute(
+        """
+        SELECT * FROM expenses
+        WHERE LOWER(title) LIKE LOWER(%s);
+        """,
+        (f"%{search}%",))
+        expenses = cursor.fetchall()
 
-        for expense in self.expenses:
-            title = expense["title"].lower()
-
-            if search in title:
-                found = True
-                print(
-                    "ID :", expense["id"],
-                    "| Title:", expense["title"],
-                    "| Amount:", expense["amount"],
-                    "| Category:", expense["category"]
-                )
-        if not found:
+        if not expenses:
             print("No expense found")
-
+        else:
+            for expense in expenses:
+                print(
+                "ID :", expense[0],
+                "| Title:", expense[1],
+                "| Amount:", expense[2],
+                "| Category:", expense[3],
+                "| Date:", expense[4]
+                )
+        cursor.close()
+        conn.close()
+        
     def highest_expense(self):
-        if not self.expenses:
+        conn = get_connection()
+        cursor = conn.cursor()
+        cursor.execute(
+            """
+            SELECT *
+            FROM expenses
+            ORDER BY amount DESC
+            LIMIT 1;
+            """
+        )
+        expense = cursor.fetchone()
+        if not expense:
             print("No expenses found")
             return
-        highest = max(self.expenses, key = lambda x: x["amount"])
-        print("Highest Expense: ", highest["title"], "| ", highest["amount"])
+        else:
+            print(
+                    "ID :", expense[0],
+                    "| Title:", expense[1],
+                    "| Amount:", expense[2],
+                    "| Category:", expense[3],
+                    "| Date:", expense[4]
+                )
+        cursor.close()
+        conn.close()
 
     def lowest_expense(self):
-        if not self.expenses:
+        conn = get_connection()
+        cursor = conn.cursor()
+        cursor.execute(
+            """
+            SELECT *
+            FROM expenses
+            ORDER BY amount ASC
+            LIMIT 1;
+            """
+        )
+        expense = cursor.fetchone()
+        if not expense:
             print("No expenses found")
             return
-        lowest = min(self.expenses, key = lambda x: x["amount"] )
-        print ("Lowest expense: ", lowest["title"], "| ", lowest["amount"])
+        else:
+            print(
+                    "ID :", expense[0],
+                    "| Title:", expense[1],
+                    "| Amount:", expense[2],
+                    "| Category:", expense[3],
+                    "| Date:", expense[4]
+                )
+        cursor.close()
+        conn.close()
 
 
 
