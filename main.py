@@ -1,5 +1,5 @@
 from database import get_connection
-
+import csv
 
 class ExpenseTracker:
     def __init__(self):
@@ -11,6 +11,18 @@ class ExpenseTracker:
             "Other"
         ]
  
+    def export_to_csv(self):
+        conn = get_connection()
+        cursor = conn.cursor()
+        cursor.execute("SELECT * FROM expenses ORDER BY id ASC")
+        expenses = cursor.fetchall()
+
+        with open("expenses.csv","w", newline ="") as file:
+            writer = csv.writer(file)
+            writer.writerow(["ID", "Title", "Amount", "Category", "Date"])
+            writer.writerows(expenses)
+        cursor.close()
+        conn.close()
 
     def get_valid_number(self, message):
         while True:
@@ -29,6 +41,7 @@ class ExpenseTracker:
         cursor.execute(
             """
             SELECT * FROM expenses
+            ORDER BY id ASC
             """
         )
         expenses = cursor.fetchall()
@@ -64,6 +77,7 @@ class ExpenseTracker:
         cursor.close()
         conn.close()
         print("Expenses added successfully")
+        self.export_to_csv()
 
     def delete_expense(self):
         id_del = self.get_valid_number("Enter the id you want to delete: ")
@@ -78,6 +92,7 @@ class ExpenseTracker:
         if cursor.rowcount > 0:
             print("Expense deleted Successfully")
             conn.commit()
+            self.export_to_csv()
         else:
             print("Expense not found")
         
@@ -106,6 +121,7 @@ class ExpenseTracker:
                 if cursor.rowcount > 0:
                     conn.commit()
                     print("Name changed Successfully")
+                    self.export_to_csv()
                 else:
                     print("Expense not found")
             elif op == "2":
@@ -121,6 +137,7 @@ class ExpenseTracker:
                 if cursor.rowcount > 0:
                     conn.commit()
                     print("Amount changed Successfully")
+                    self.export_to_csv()
                 else:
                     print("Expense not found")
             elif op == "3":
@@ -136,6 +153,7 @@ class ExpenseTracker:
                 if cursor.rowcount > 0:
                     conn.commit()
                     print("Category changed Successfully")
+                    self.export_to_csv()
                 else:
                     print("Expense not found")
             
