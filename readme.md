@@ -1,53 +1,120 @@
 # 💰 Expense Tracker
 
-A backend application built version-by-version using Python, PostgreSQL, and FastAPI.
+A version-by-version backend development project built to learn **Python**, **PostgreSQL**, **FastAPI**, and modern REST API development from scratch.
 
-## 🗺️ Versions
+Instead of building everything at once, this project evolves with every version, introducing new backend concepts step-by-step while following industry practices.
 
-| Version | Description | Status |
-|---------|-------------|--------|
-| V1 | Pure Python CRUD (in-memory) | 
-| V2 | OOP Refactor + Categories + Monthly Summary | 
-| V3 | JSON Persistence + Search + Filter + Analytics | 
-| V4 | PostgreSQL + FastAPI REST API |  
-| V5 | JWT Authentication + User Accounts |
+---
 
-## ✨ Features
+# 🗺️ Project Roadmap
 
-- Add, View, Update, Delete expenses
-- Category-wise filtering
-- Search by title
-- Monthly summary with percentage breakdown
-- Highest & Lowest expense finder
-- Auto CSV export on every change
-- PostgreSQL persistent storage
-- REST API with FastAPI
+| Version | Description                                    
+| ------- | ---------------------------------------------- 
+| ✅ V1    | Pure Python CRUD (In-Memory)                   
+| ✅ V2    | OOP Refactor + Categories + Monthly Summary    
+| ✅ V3    | JSON Persistence + Search + Filter + Analytics 
+| ✅ V4    | PostgreSQL + FastAPI REST API                  
+| ✅ V5   | JWT Authentication + User Accounts             
 
-## 🛠️ Tech Stack
+---
 
-- **Language:** Python
-- **Framework:** FastAPI
-- **Database:** PostgreSQL
-- **ORM:** psycopg2
-- **API Docs:** Swagger UI (auto-generated)
-- **Auth (V5):** JWT
+# ✨ Features
 
-## 📁 Project Structure
+### Expense Management
+
+* ✅ Add Expense
+* ✅ View All Expenses
+* ✅ Update Expense
+* ✅ Delete Expense
+
+### Search & Filtering
+
+* ✅ Search expenses by title
+* ✅ Filter expenses by category
+* ✅ Category-wise summary
+* ✅ Expense analytics
+
+### Data Management
+
+* ✅ PostgreSQL persistent storage
+* ✅ CSV export
+* ✅ JSON persistence (V3)
+* ✅ Monthly expense summary
+* ✅ Highest & Lowest expense finder
+
+### API Features
+
+* ✅ RESTful API
+* ✅ FastAPI
+* ✅ Swagger UI Documentation
+* ✅ Pydantic Validation
+* ✅ Proper HTTP Status Codes
+* ✅ HTTP Exception Handling
+
+---
+
+# 🛠 Tech Stack
+
+| Technology   | Purpose              |
+| ------------ | -------------------- |
+| Python       | Programming Language |
+| FastAPI      | Backend Framework    |
+| PostgreSQL   | Database             |
+| psycopg2     | PostgreSQL Driver    |
+| Pydantic     | Data Validation      |
+| Swagger UI   | API Documentation    |
+| Git & GitHub | Version Control      |
+
+---
+
+# 📁 Project Structure
+
+```text
 expense_tracker/
-├── app.py # FastAPI routes
-├── database.py # PostgreSQL connection
-├── main.py # CLI version (V1-V3)
-├── expenses.csv # Auto-exported CSV
-└── README.md
+│
+├── app.py              
+├── database.py         
+├── main.py             
+├── expenses.csv        
+├── expenses.json       
+├── README.md
+├── .gitignore
+│
+└── __pycache__/        
+```
 
+---
 
-## 🚀 How to Run
+# 🚀 Getting Started
 
-### 1. Setup PostgreSQL
+## 1️⃣ Clone the Repository
+
 ```bash
-psql -U postgres
+git clone https://github.com/YOUR_USERNAME/expense_tracker.git
+cd expense_tracker
+```
+
+---
+
+## 2️⃣ Install Dependencies
+
+```bash
+pip install fastapi uvicorn psycopg2-binary
+```
+
+---
+
+## 3️⃣ Setup PostgreSQL
+
+Create Database
+
+```sql
 CREATE DATABASE expense_tracker;
-\c expense_tracker
+```
+
+Create Table
+
+```sql
 CREATE TABLE expenses (
     id SERIAL PRIMARY KEY,
     title VARCHAR(100) NOT NULL,
@@ -57,31 +124,82 @@ CREATE TABLE expenses (
 );
 ```
 
-### 2. Install Dependencies
-```bash
-pip install fastapi uvicorn psycopg2-binary
-```
+---
 
-### 3. Run the API
+## 4️⃣ Run the Server
+
 ```bash
 python -m uvicorn app:app --reload
 ```
 
-### 4. Open API Docs
+---
+
+## 5️⃣ Open Swagger Documentation
+
+```
 http://127.0.0.1:8000/docs
+```
+
+---
+
+# 📡 API Endpoints
+
+| Method | Endpoint                       | Description                 |
+| ------ | ------------------------------ | --------------------------- |
+| GET    | `/expenses`                    | Get all expenses            |
+| POST   | `/expenses`                    | Create a new expense        |
+| PUT    | `/expenses/{id}`               | Update an existing expense  |
+| DELETE | `/expenses/{id}`               | Delete an expense           |
+| GET    | `/expenses/search?title=`      | Search expenses by title    |
+| GET    | `/expenses/category?category=` | Filter expenses by category |
+| GET    | `/expenses/summary`            | Expense summary by category |
+
+---
+
+# 🔐 Authentication & User Management (V5)
 
 
-## 📡 API Endpoints (V4)
 
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| GET | `/expenses` | Get all expenses |
-| POST | `/expenses` | Add new expense |
-| PUT | `/expenses/{id}` | Update expense |
-| DELETE | `/expenses/{id}` | Delete expense |
+### Planned Features
 
-## 🔐 Authentication (V5)
+* ✅ User Registration
+* ✅ Secure Password Hashing (bcrypt)
+* ✅ User Login
+* ✅ JWT Authentication
+* ✅ Access Tokens
+* ✅ Protected Routes
+* ✅ OAuth2PasswordBearer
+* ✅ Multi-user Expense Tracking
+* ✅ Each user can access only their own expenses
 
-- User Registration
-- Login with JWT tokens
-- Personal expense tracking per user
+---
+
+# 📚 Concepts Learned
+
+* Python
+* Object-Oriented Programming
+* File Handling
+* JSON
+* CSV
+* SQL
+* PostgreSQL
+* CRUD Operations
+* REST APIs
+* FastAPI
+* Pydantic
+* HTTP Status Codes
+* Exception Handling
+* Git & GitHub
+
+
+---
+
+# 🎯 Project Goal
+
+This project is part of my backend development journey and is being built version-by-version to gain a strong understanding of backend engineering, databases, REST APIs, authentication, and modern Python development.
+
+Each version introduces new concepts while improving the architecture of the previous one.
+
+---
+
+## ⭐ If you found this project useful, consider giving it a star!
